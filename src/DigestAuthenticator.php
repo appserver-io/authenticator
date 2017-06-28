@@ -22,7 +22,6 @@ namespace AppserverIo\Authenticator;
 
 use AppserverIo\Psr\HttpMessage\Protocol;
 use AppserverIo\Psr\HttpMessage\RequestInterface;
-use AppserverIo\Http\Authentication\Adapters\HtdigestAdapter;
 
 /**
  * Authenticator implementation for Digest Authentication support.
