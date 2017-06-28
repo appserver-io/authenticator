@@ -454,7 +454,7 @@ class FormAuthenticator extends AbstractAuthenticator
         ) {
             // load username/password from the request
             $this->username = new String($servletRequest->getParameter(FormKeys::USERNAME));
-            $this->password = new String($servletRequest->getParameter(FormKeys::PASSWORD));
+            $this->password = new String($servletRequest->getParameter(FormKeys::PASSWORD, FILTER_UNSAFE_RAW));
         }
     }
 
