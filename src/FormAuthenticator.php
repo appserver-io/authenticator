@@ -124,6 +124,9 @@ class FormAuthenticator extends AbstractAuthenticator
             $this->onFailure($realm, $servletRequest, $servletResponse);
             return false;
         }
+        
+        // renew the session identifier to mitigate session fixation
+        $session->renewId();
 
         // invoke the onSuccess callback and redirect the user to the original page
         $this->onSuccess($userPrincipal, $servletRequest, $servletResponse);
