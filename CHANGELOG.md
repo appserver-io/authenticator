@@ -1,3 +1,13 @@
+# Version 1.0.3
+
+## Bugfixes
+
+* Mitigate session fixation during login 
+
+## Features
+
+* None
+
 # Version 1.0.2
 
 ## Bugfixes
