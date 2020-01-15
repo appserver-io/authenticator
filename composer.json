@@ -1,43 +1,44 @@
 {
-	"name" : "appserver-io/authenticator",
-	"description" : "Authenticator implementations for Basic, Digest and Form based HTTP authentication",
-	"homepage" : "https://github.com/appserver-io/authenticator",
-	"license" : "OSL-3.0",
-	"keywords" : [
-		"php",
-		"interface",
-		"dependency",
-		"injection"
-	],
-	"authors" : [{
-			"name" : "Tim Wagner",
-			"email" : "tw@appserver.io",
-			"homepage" : "http://www.appserver.io",
-			"role" : "Developer"
-		}
-	],
-	"require" : {
-		"php" : ">=5.4.0",
+    "name": "appserver-io/authenticator",
+    "description": "Authenticator implementations for Basic, Digest and Form based HTTP authentication",
+    "homepage": "https://github.com/appserver-io/authenticator",
+    "license": "OSL-3.0",
+    "keywords": [
+        "php",
+        "interface",
+        "dependency",
+        "injection"
+    ],
+    "authors": [
+        {
+            "name": "Tim Wagner",
+            "email": "tw@appserver.io",
+            "homepage": "http://www.appserver.io",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
         "rhumsaa/uuid": "~2.4",
         "appserver-io/http": "~2.0",
-        "appserver-io/collections" : "~1.0",
+        "appserver-io/collections": "~1.0",
         "appserver-io-psr/auth": "~2.0",
-        "appserver-io-psr/servlet": "~3.0"
-	},
-	"require-dev" : {
-		"appserver-io/build" : "~1.0"
-	},
-	"autoload" : {
-		"psr-4" : {
-			"AppserverIo\\Authenticator\\" : [
-				"src/",
-				"tests/"
-			]
-		}
-	},
-	"support" : {
-		"email" : "tw@appserver.io",
-		"issues" : "https://github.com/appserver-io/authenticator/issues",
-		"source" : "https://github.com/appserver-io/authenticator"
-	}
+        "appserver-io-psr/servlet": "~4.0"
+    },
+    "require-dev": {
+        "appserver-io/build": "~1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AppserverIo\\Authenticator\\": [
+                "src/",
+                "tests/"
+            ]
+        }
+    },
+    "support": {
+        "email": "tw@appserver.io",
+        "issues": "https://github.com/appserver-io/authenticator/issues",
+        "source": "https://github.com/appserver-io/authenticator"
+    }
 }

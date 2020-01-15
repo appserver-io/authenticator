@@ -14,9 +14,6 @@ before_install:
   - phpenv rehash
   - wget https://scrutinizer-ci.com/ocular.phar
 
-before_script:
-  - composer selfupdate
-
 script:
   - ant composer-init
   - ant build
