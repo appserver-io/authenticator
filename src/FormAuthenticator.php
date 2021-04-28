@@ -124,7 +124,7 @@ class FormAuthenticator extends AbstractAuthenticator
             $this->onFailure($realm, $servletRequest, $servletResponse);
             return false;
         }
-        
+
         // renew the session identifier to mitigate session fixation
         $session->renewId();
 
@@ -306,6 +306,15 @@ class FormAuthenticator extends AbstractAuthenticator
         // query whether or not we can authenticate the user
         if ($userPrincipal == null) {
             throw new ServletException(sprintf('Can\'t authenticate user %s', $username));
+        }
+
+        // add the user principal and the authentication type to the request
+        $servletRequest->setUserPrincipal($userPrincipal);
+        $servletRequest->setAuthType($this->getAuthType());
+
+        // set username and password in the session
+        if ($session = $servletRequest->getSession()) {
+            $session->putData(Constants::PRINCIPAL, $userPrincipal);
         }
 
         // return's the user principal

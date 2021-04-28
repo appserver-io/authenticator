@@ -1,3 +1,13 @@
+# Version 1.0.4
+
+## Bugfixes
+
+* None
+
+## Features
+
+* Register user principal in servlet request after successful login
+
 # Version 1.0.3
 
 ## Bugfixes
