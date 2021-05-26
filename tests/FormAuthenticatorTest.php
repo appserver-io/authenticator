@@ -43,7 +43,7 @@ class FormAuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
 
         // initialize mock servlet request/principal
-        $mockServletRequest = $this->getMock('AppserverIo\Psr\Servlet\Http\HttpServletRequestInterface');
+        $mockServletRequest = $this->getMock('AppserverIo\Authenticator\Http\HttpServletRequestInterface');
         $mockPrincipal = $this->getMock('AppserverIo\Psr\Security\PrincipalInterface');
 
         // initialize a mock realm
@@ -72,8 +72,13 @@ class FormAuthenticatorTest extends \PHPUnit_Framework_TestCase
                                   ->with($realmName)
                                   ->willReturn($mockRealm);
 
+        // initialize a mock authenticator node configuration
+        $mockAuthenticatorNode = $this->getMockBuilder($authenticatorNodeInterface = 'AppserverIo\Appserver\Core\Api\Node\AuthenticatorNodeInterface')
+                                      ->setMethods(get_class_methods($authenticatorNodeInterface))
+                                      ->getMock();
+
         // initialize the authenticator
-        $authenticator = new FormAuthenticator($mockConfigData, $mockAuthenticationManager);
+        $authenticator = new FormAuthenticator($mockConfigData, $mockAuthenticationManager, $mockAuthenticatorNode);
 
         // test the authenticator's login() method
         $this->assertInstanceOf(

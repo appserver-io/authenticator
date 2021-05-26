@@ -21,19 +21,25 @@
 namespace AppserverIo\Authenticator;
 
 use AppserverIo\Lang\String;
+use AppserverIo\Lang\Boolean;
 use AppserverIo\Collections\ArrayList;
 use AppserverIo\Psr\Auth\RealmInterface;
 use AppserverIo\Psr\HttpMessage\Protocol;
+use AppserverIo\Authenticator\Utils\FormKeys;
+use AppserverIo\Authenticator\Utils\FormPageUtil;
 use AppserverIo\Psr\Security\Auth\Subject;
 use AppserverIo\Psr\Servlet\ServletException;
 use AppserverIo\Psr\Security\Utils\Constants;
+use AppserverIo\Psr\Security\SecurityException;
 use AppserverIo\Psr\Security\PrincipalInterface;
 use AppserverIo\Psr\Servlet\Utils\RequestHandlerKeys;
 use AppserverIo\Psr\Servlet\Http\HttpSessionInterface;
 use AppserverIo\Psr\Servlet\Http\HttpServletRequestInterface;
 use AppserverIo\Psr\Servlet\Http\HttpServletResponseInterface;
 use AppserverIo\Http\Authentication\AuthenticationException;
-use AppserverIo\Authenticator\Utils\FormKeys;
+use AppserverIo\Psr\Auth\LoginConfigurationInterface;
+use AppserverIo\Psr\Auth\AuthenticationManagerInterface;
+use AppserverIo\Appserver\Core\Api\Node\AuthenticatorNodeInterface;
 
 /**
  * A form based authenticator implementation.
@@ -60,6 +66,45 @@ class FormAuthenticator extends AbstractAuthenticator
      * @var string
      */
     protected $password;
+
+    /**
+     * The utility instance to handle SSO functionality.
+     *
+     * @var \AppserverIo\Authenticator\Utils\FormPageUtilInterface
+     */
+    protected $formPageUtil;
+
+    /**
+     * Constructs the authentication type.
+     *
+     * @param \AppserverIo\Psr\Auth\LoginConfigurationInterface               $configData                 The configuration data for auth type instance
+     * @param \AppserverIo\Psr\Auth\AuthenticationManagerInterface            $authenticationManager      The authentication manager instance
+     * @param \AppserverIo\Appserver\Core\Api\Node\AuthenticatorNodeInterface $authenticatorConfiguration The authenticator configuration instance
+     */
+    public function __construct(
+        LoginConfigurationInterface $configData,
+        AuthenticationManagerInterface $authenticationManager,
+        AuthenticatorNodeInterface $authenticatorConfiguration
+    ) {
+
+        // initialize the form page utility
+        $this->formPageUtil = new FormPageUtil();
+
+        // pass the instances to the parent constructor
+        parent::__construct($configData, $authenticationManager, $authenticatorConfiguration);
+    }
+
+    /**
+     * Return's the location for the 307 redirect to the login page.
+     *
+     * @param \AppserverIo\Psr\Servlet\Http\HttpServletRequestInterface $servletRequest The servlet request instance
+     *
+     * @return string The location for the 307 redirect
+     */
+    protected function getLoginPage(HttpServletRequestInterface $servletRequest)
+    {
+        return $this->formPageUtil->getLoginPage($servletRequest, $this->getConfigData());
+    }
 
     /**
      * Try to authenticate the user making this request, based on the specified login configuration.
@@ -116,7 +161,7 @@ class FormAuthenticator extends AbstractAuthenticator
         $realm = $this->getAuthenticationManager()->getRealm($this->getRealmName());
 
         // authenticate the request and initialize the user principal
-        $userPrincipal = $realm->authenticate($this->getUsername(), $this->getPassword());
+        $userPrincipal = call_user_func_array(array($realm, 'authenticate'), $this->getCredentials());
 
         // query whether or not the realm returned an authenticated user principal
         if ($userPrincipal == null) {
@@ -131,6 +176,16 @@ class FormAuthenticator extends AbstractAuthenticator
         // invoke the onSuccess callback and redirect the user to the original page
         $this->onSuccess($userPrincipal, $servletRequest, $servletResponse);
         return false;
+    }
+
+    /**
+     * Return's the array with the login credentials.
+     *
+     * @return \AppserverIo\Lang\String[] The array with the login credentials
+     */
+    protected function getCredentials()
+    {
+        return array($this->getUsername(), $this->getPassword());
     }
 
     /**
@@ -216,30 +271,22 @@ class FormAuthenticator extends AbstractAuthenticator
         HttpServletResponseInterface $servletResponse
     ) {
 
-        // query whether or not we've a valid form login configuration
-        if ($formLoginConfig = $this->getConfigData()->getFormLoginConfig()) {
-            if ($formLoginPage = $formLoginConfig->getFormLoginPage()) {
-                // initialize the location to redirect to
-                $location = $formLoginPage->__toString();
-                if ($baseModifier = $servletRequest->getBaseModifier()) {
-                    $location = $baseModifier . $location;
-                }
-
-                // redirect to the configured login page
-                $servletRequest->setDispatched(true);
-                $servletResponse->setStatusCode(307);
-                $servletResponse->addHeader(Protocol::HEADER_LOCATION, $location);
-                return;
-            }
+        try {
+            // load the location for the login page
+            $location = $this->getLoginPage($servletRequest);
+            // redirect to the configured login page
+            $servletRequest->setDispatched(true);
+            $servletResponse->setStatusCode(307);
+            $servletResponse->addHeader(Protocol::HEADER_LOCATION, $location);
+        } catch (SecurityException $se) {
+            // redirect to the default error page
+            $servletRequest->setAttribute(
+                RequestHandlerKeys::ERROR_MESSAGE,
+                $se->getMessage()
+            );
+            $servletRequest->setDispatched(true);
+            $servletResponse->setStatusCode(500);
         }
-
-        // redirect to the default error page
-        $servletRequest->setAttribute(
-            RequestHandlerKeys::ERROR_MESSAGE,
-            'Please configure a form-login-page when using auth-method \'Form\' in the login-config of your application\'s web.xml'
-        );
-        $servletRequest->setDispatched(true);
-        $servletResponse->setStatusCode(500);
     }
 
     /**

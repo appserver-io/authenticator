@@ -25,6 +25,7 @@ use AppserverIo\Lang\Boolean;
 use AppserverIo\Psr\Auth\AuthenticatorInterface;
 use AppserverIo\Psr\Auth\LoginConfigurationInterface;
 use AppserverIo\Psr\Auth\AuthenticationManagerInterface;
+use AppserverIo\Appserver\Core\Api\Node\AuthenticatorNodeInterface;
 
 /**
  * Abstract authenticator base class providing generic functionality.
@@ -39,18 +40,18 @@ abstract class AbstractAuthenticator implements AuthenticatorInterface
 {
 
     /**
-     * The UUID of the authenticator.
-     *
-     * @var string
-     */
-    protected $serial;
-
-    /**
      * Mark's the authenticator as the default one.
      *
      * @var \AppserverIo\Lang\Boolean
      */
     protected $defaultAuthenticator;
+
+    /**
+     * The authentication manager instance.
+     *
+     * @var \AppserverIo\Psr\Auth\AuthenticationManagerInterface
+     */
+    protected $authenticationManager;
 
     /**
      * Holds the configuration data given for authentication type.
@@ -60,11 +61,11 @@ abstract class AbstractAuthenticator implements AuthenticatorInterface
     protected $configData;
 
     /**
-     * The authentication manager instance.
+     * The authenticator configuration.
      *
-     * @var \AppserverIo\Psr\Auth\AuthenticationManagerInterface
+     * @var \AppserverIo\Appserver\Core\Api\Node\AuthenticatorNodeInterface
      */
-    protected $authenticationManager;
+    protected $authenticatorConfiguration;
 
     /**
      * The name of the user to authenticate.
@@ -76,28 +77,26 @@ abstract class AbstractAuthenticator implements AuthenticatorInterface
     /**
      * Constructs the authentication type.
      *
-     * @param \AppserverIo\Psr\Auth\LoginConfigurationInterface    $configData            The configuration data for auth type instance
-     * @param \AppserverIo\Psr\Auth\AuthenticationManagerInterface $authenticationManager The authentication manager instance
-     * @param \AppserverIo\Lang\Boolean                            $defaultAuthenticator  The flag for the default authenticator
+     * @param \AppserverIo\Psr\Auth\LoginConfigurationInterface               $configData                 The configuration data for auth type instance
+     * @param \AppserverIo\Psr\Auth\AuthenticationManagerInterface            $authenticationManager      The authentication manager instance
+     * @param \AppserverIo\Appserver\Core\Api\Node\AuthenticatorNodeInterface $authenticatorConfiguration The authenticator configuration instance
      */
     public function __construct(
         LoginConfigurationInterface $configData,
         AuthenticationManagerInterface $authenticationManager,
-        Boolean $defaultAuthenticator = null
+        AuthenticatorNodeInterface $authenticatorConfiguration
     ) {
-
-        // create a UUID serial for the authenticator
-        $this->serial = Uuid::uuid4()->__toString();
 
         // initialize the authenticator with the passed values
         $this->configData = $configData;
         $this->authenticationManager = $authenticationManager;
+        $this->authenticatorConfiguration = $authenticatorConfiguration;
 
         // query whether or not the default flag has been passed
-        if ($defaultAuthenticator == null) {
-            $this->defaultAuthenticator = new Boolean(false);
+        if ($configData->getDefaultAuthenticator()) {
+            $this->defaultAuthenticator = new Boolean($configData->getDefaultAuthenticator()->__toString());
         } else {
-            $this->defaultAuthenticator = $defaultAuthenticator;
+            $this->defaultAuthenticator = new Boolean(false);
         }
     }
 
@@ -105,10 +104,11 @@ abstract class AbstractAuthenticator implements AuthenticatorInterface
      * Return's the authenticator's UUID.
      *
      * @return string The UUID
+     * @deprecated since 1.1.29
      */
     public function getSerial()
     {
-        return $this->serial;
+        return $this->getRealmName();
     }
 
     /**
@@ -119,6 +119,16 @@ abstract class AbstractAuthenticator implements AuthenticatorInterface
     public function getConfigData()
     {
         return $this->configData;
+    }
+
+    /**
+     * The authenticator configuration instance.
+     *
+     * @return \AppserverIo\Appserver\Core\Api\Node\AuthenticatorNodeInterface The authenticator configuration instance
+     */
+    public function getAuthenticatorConfiguration()
+    {
+        return $this->authenticatorConfiguration;
     }
 
     /**

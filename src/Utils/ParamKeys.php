@@ -1,7 +1,7 @@
 <?php
 
 /**
- * AppserverIo\Authenticator\Utils\FormKeys
+ * AppserverIo\Authenticator\Utils\ParamKeys
  *
  * NOTICE OF LICENSE
  *
@@ -21,7 +21,7 @@
 namespace AppserverIo\Authenticator\Utils;
 
 /**
- * Utility class that contains the form keys.
+ * Utility class that contains the parameter keys.
  *
  * @author    Tim Wagner <tw@appserver.io>
  * @copyright 2016 TechDivision GmbH <info@appserver.io>
@@ -29,36 +29,22 @@ namespace AppserverIo\Authenticator\Utils;
  * @link      https://github.com/appserver-io/authenticator
  * @link      http://www.appserver.io
  */
-class FormKeys
+class ParamKeys
 {
 
     /**
-     * The key for the username specified in the login form.
+     * The key for the "identityUrl" parameter.
      *
      * @var string
      */
-    const USERNAME = 'p_username';
+    const IDENTITY_URL = 'identityUrl';
 
     /**
-     * The key for the password specified in the login in the form.
+     * The key for the "authorizationPath" parameter.
      *
      * @var string
      */
-    const PASSWORD = 'p_password';
-
-    /**
-     * The key for the authorization code specified in the login in the form.
-     *
-     * @var string
-     */
-    const CODE = 'code';
-
-    /**
-     * The key for a login form name.
-     *
-     * @var string
-     */
-    const FORM_ACTION = 'p_security_check';
+    const AUTHORIZATION_PATH = 'authorizationPath';
 
     /**
      * This is a utility class, so protect it against direct instantiation.

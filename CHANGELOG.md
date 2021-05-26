@@ -1,3 +1,14 @@
+# Version 2.0.0
+
+## Bugfixes
+
+* None
+
+## Features
+
+* Minor refactoring of FormAuthenticator implementation
+* Add new BearerAuthenticator implementation
+
 # Version 1.0.4
 
 ## Bugfixes
