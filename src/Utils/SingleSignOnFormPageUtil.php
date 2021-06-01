@@ -95,9 +95,16 @@ class SingleSignOnFormPageUtil implements FormPageUtilInterface
             $servletRequest->getServerVar(ServerVars::REQUEST_SCHEME),
             $servletRequest->getServerVar(ServerVars::SERVER_NAME)
         );
+
         // load the actual server port, because by default and in local
         // environments we often use 9080/9443 instead of 80/443
         $serverPort = (int) $servletRequest->getServerVar(ServerVars::SERVER_PORT);
+
+        // query whether or not a custom server port, e. g. in context of containerized
+        // environment, has been specified in the manager configuration
+        if ($customServerPort = $managerConfiguration->getParam(ParamKeys::SERVER_PORT)) {
+            $serverPort = $customServerPort;
+        }
 
         // append the port, if we do NOT have one of the default ports
         $redirectUri = in_array($serverPort, [80, 443]) ? $redirectUri : sprintf('%s:%d', $redirectUri, $serverPort);

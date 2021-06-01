@@ -1,3 +1,13 @@
+# Version 3.0.0
+
+## Bugfixes
+
+* None
+
+## Features
+
+* Refactor SingleSignOnFormPageUtil to support custom server port for redirect URI in case of usage in a container environment
+
 # Version 2.0.0
 
 ## Bugfixes

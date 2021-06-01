@@ -47,6 +47,14 @@ class ParamKeys
     const AUTHORIZATION_PATH = 'authorizationPath';
 
     /**
+     * The key for the "serverPort" parameter.
+     *
+     * @var string
+     */
+    const SERVER_PORT = 'serverPort';
+
+
+    /**
      * This is a utility class, so protect it against direct instantiation.
      */
     private function __construct()
