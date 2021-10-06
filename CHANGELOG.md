@@ -1,3 +1,13 @@
+# Version 3.0.1
+
+## Bugfixes
+
+* Add missing use statement for ServletException in BearerAuthenticator
+
+## Features
+
+* None
+
 # Version 3.0.0
 
 ## Bugfixes
