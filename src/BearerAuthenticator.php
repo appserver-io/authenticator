@@ -24,6 +24,7 @@ use AppserverIo\Lang\String;
 use AppserverIo\Psr\Auth\RealmInterface;
 use AppserverIo\Psr\HttpMessage\Protocol;
 use AppserverIo\Psr\Security\PrincipalInterface;
+use AppserverIo\Psr\Servlet\ServletException;
 use AppserverIo\Psr\Servlet\Utils\RequestHandlerKeys;
 use AppserverIo\Psr\Servlet\Http\HttpServletRequestInterface;
 use AppserverIo\Psr\Servlet\Http\HttpServletResponseInterface;
